@@ -1,10 +1,8 @@
 # chain.py
 from dotenv import load_dotenv
 
-from tools_executor import search_places_tool
 load_dotenv()
 import datetime
-
 
 
 from langchain_core.messages import HumanMessage

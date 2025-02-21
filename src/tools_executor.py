@@ -63,7 +63,7 @@ def execute_tools(state: List[BaseMessage]) -> List[BaseMessage]:
 
     tool_messages = []
 
-    print(all_calls)
+   
 
     ids = []
     tool_invocation = []
@@ -73,36 +73,36 @@ def execute_tools(state: List[BaseMessage]) -> List[BaseMessage]:
         parsed_args = call_data.get("args", {})
         args_Restaurants = parsed_args.get("toolArgumentsRestaurants", [])
         args_Tourists = parsed_args.get("toolArgumentsTourist", [])
-        
+
         for i, call in enumerate(args_Restaurants):
-            ids.append(f"Call_Restaurant_{i}")
             tool_invocation.append(ToolInvocation(
                 tool = "search_places_tool",
                 tool_input = call,
             ))
+            ids.append(call_data["id"])
         for i, call in enumerate(args_Tourists):
-            ids.append(f"Call_Tourists_{i}")
             tool_invocation.append(ToolInvocation(
                 tool = "search_places_tool",
                 tool_input = call,
             ))
+            ids.append(call_data["id"])
+    
     
     outputs = tool_executor.batch(tool_invocation)
     
-    print("IDs", ids)
-    print("ToolInvocation", tool_invocation)
+
 
     outputs_map = defaultdict(dict)
 
-    for id, output in zip(ids,outputs):
-        outputs_map[id] = output
+    for id, output, tool_invocation in zip(ids,outputs,tool_invocation):
+        key = json.dumps(tool_invocation.tool_input, sort_keys=True)
+        outputs_map[id][key] = output
 
     tool_messages = []
 
     for id, query_outputs in outputs_map.items():
         tool_messages.append(ToolMessage(
             content = json.dumps(query_outputs), tool_call_id = id))
-    print("Tool_Messages: ",tool_messages)
         
     return tool_messages
 

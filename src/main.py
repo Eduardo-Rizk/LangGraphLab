@@ -48,5 +48,6 @@ print(graph.get_graph().draw_mermaid())
 
 res = graph.invoke("I'm going to Paris for 3 days. What should I do?")
 
-print(res)
+print(res[-1].tool_calls[0]["args"]["itinerary"])
+
 
